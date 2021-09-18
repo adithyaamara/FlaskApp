@@ -15,7 +15,15 @@ app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
 #print(config)
 mysql = MySQL(app) 
-
+#Creating a connection cursor
+cursor = mysql.connection.cursor()
+#Executing SQL Statements
+#cursor.execute(''' CREATE TABLE table_name(field1, field2...) ''')
+#Saving the Actions performed on the DB
+#mysql.connection.commit()
+#Closing the cursor
+#cursor.close()
+#Routers
 @app.route('/result')
 def display():
     """Result Grabber with submit and reset"""
