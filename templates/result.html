@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/common.css">
+    <title>Result Grabber!</title>
+</head>
+<body align="center">
+    <h1>Marks Grabber!!</h1>
+    <form action="http://localhost:4444/marks" method="post">
+        <table align="center" border="1" cellpadding=3px cellspacing=3px>
+            <tr>
+                <td><b>Physics :</b></td>
+                <td><input type="number" min="0" max="100" name="Physics" step="0.01"></td>
+            </tr>
+            <tr>
+                <td><b>Maths :</b></td>
+                <td><input type="number" min=0 max=100 name="Mathematics" step="0.01"></td>
+            </tr>
+            <tr>
+                <td><b>Chemistry :</b></td>
+                <td><input type="number" min=0 max=100 name="Chemistry" step="0.01"></td>
+            </tr>
+        </table>
+        <br>
+        <b><input type="submit" value="Submit"></b> <b><input type="reset" value="Reset"></b>
+    </form>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site - Map</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/common.css">
+</head>
+<body align="center">
+    <h3>Site Map</h3>
+    <table align="center" border=1 style="border-radius: 5px;">
+        {%for k,v in result.items()%}
+        <tr>
+            <th><a href={{k}}>{{k}}</a></th>
+            <td>{{v}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+</body>
+</html>

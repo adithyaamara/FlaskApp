@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Window</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/common.css">
+</head>
+<body align="center">
+    <h1>Result View : </h1>
+    <table border="1" align="center" cellpadding=5px cellspacing=5>
+        {% for key,value in result.items() %}
+            <tr>
+                <th style="width: 100px;" align="left">{{key}}</th>
+                <td style="width: 100px;" align="center">{{value}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
