@@ -7,7 +7,7 @@ A Python - Flask application to demonstrate possible functionalities of Flask Fr
  - `sudo docker run -d -p4444:4444 flaskapp:v1.0`
  - View HomePage / Site Map At : `http://docker-machine-ip:4444/`
 
-#Usage - LocalMachine
+# Usage - LocalMachine
  - `pip install virtualenv`
  - `virtualenv venv`
  - open command prompt and `cd venv`
