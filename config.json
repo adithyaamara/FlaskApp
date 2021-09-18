@@ -1,0 +1,6 @@
+{
+    "MYSQL_HOST" : "localhost",
+    "MYSQL_USER" : "admin",
+    "MYSQL_PASSWORD" : "root@1234",
+    "MYSQL_DB" : "flaskapp"
+}

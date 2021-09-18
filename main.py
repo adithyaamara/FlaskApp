@@ -2,7 +2,19 @@ from flask import Flask,render_template,jsonify
 from flask.globals import request
 from flask.helpers import url_for
 from werkzeug.utils import redirect
+from flask_mysqldb import MySQL
+import json
+#Craete an object of Flak class
 app = Flask(__name__)
+#Read MySql Config from json
+config = json.load(open("config.json",'r'))
+#Initiate MySql Connection from flask app
+app.config['MYSQL_HOST'] = config['MYSQL_HOST']
+app.config['MYSQL_USER'] = config['MYSQL_USER']
+app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
+app.config['MYSQL_DB'] = config['MYSQL_DB']
+#print(config)
+mysql = MySQL(app) 
 
 @app.route('/result')
 def display():
