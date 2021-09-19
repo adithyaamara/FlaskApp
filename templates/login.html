@@ -5,12 +5,40 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Screen</title>
+    <!--Importing bootstrap's 4.5 css for using it's classes to style html elements-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<script>
+    function resetform(){
+        document.getElementById("alert").innerHTML = "Form Data Resetted...<button value='close' class='btn btn-outline-light' style='font-size: large;'>X</button>";
+        document.getElementById("alert").setAttribute('class','alert alert-primary');
+        setTimeout(function(){var div1 = document.getElementById("alert");div1.removeAttribute('class');div1.innerHTML=""},2000)
+    }
+    function notif(){div1 = document.getElementById("alert"); 
+    div1.setAttribute('class','alert alert-success'); 
+    div1.innerHTML="Submitting Form....<button value='close' class='btn btn-outline-light' style='font-size: large;'>X</button>";
+    setTimeout(function(){div1.removeAttribute('class');div1.innerHTML=""},2000)
+    }
+</script>
 </head>
-<body bgcolor="cyan" border="1" align="center">
+<body bgcolor="cyan" align="center">
+    <br><br>
     <form action="http://localhost:4444/validate" method="post">
-        <p>Enter Name : <input type="text" name="nm"></p>
-        <p>Phone Number : <input type="number" name="ph" min="0000000000" max="9999999999"></p>
-        <p><input type="submit" value="submit"></p>
+        <table align="center" cellpadding=3px cellspacing=3px>
+            <tr>
+                <th>Enter Name : </th>
+                <td><input type="text" name="nm"></td>
+            </tr>
+            <tr>
+                <th>Phone Number : </th>
+                <td><input type="number" name="ph" min="0000000000" max="9999999999"></td>
+            </tr>
+            <tr align="center">
+                <td><input type="submit" class="btn btn-outline-success" onclick="notif()" value="submit"></td>
+                <td><input type="reset" class="btn btn-outline-danger" onclick=resetform() value="Reset"></td>
+            </tr>
+        </table>
     </form>
+    <div role="alert "id="alert" style="position: absolute;top: 0;right: 0;width: 10cm;">
+    </div>
 </body>
 </html>

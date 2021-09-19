@@ -15,12 +15,7 @@ app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
 #print(config)
 mysql = MySQL(app) 
-#Creating a connection cursor
-cursor = mysql.connection.cursor()
-#Executing SQL Statements
-#cursor.execute(''' CREATE TABLE table_name(field1, field2...) ''')
-#Saving the Actions performed on the DB
-#mysql.connection.commit()
+
 #Closing the cursor
 #cursor.close()
 #Routers
@@ -45,6 +40,11 @@ def marks():
 
 @app.route('/')
 def admin():
+    #Creating a connection cursor
+    #cursor = mysql.connection.cursor()
+    #Executing SQL Statements
+    #Saving the Actions performed on the DB 
+    #mysql.connection.commit()
     """Default route, redirects to site-map"""
     return redirect(url_for('help'))
 @app.route('/api')
@@ -97,6 +97,9 @@ def help():
         if rule.endpoint != 'static':
             func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
     return render_template('site-map.html', result = func_list)
-
+@app.route('/charts',methods=['GET'])
+def charts():
+    """Demo of google charts on static data"""
+    return render_template('gcharts.html')
 if __name__ == '__main__':
     app.run('127.0.0.1',4444,True)
