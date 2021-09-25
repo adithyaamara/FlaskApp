@@ -1,27 +1,29 @@
 from flask import Flask,render_template,jsonify,url_for,redirect,request
-'''
 from flask_mysqldb import MySQL
 import json
+import time
+'''
+
 import MySQLdb.cursors
 import re
-import time
 
+
+
+'''
 #Read MySql Config from json
 config = json.load(open("config.json",'r'))
-'''
 #Craete an object of Flak class
 app = Flask(__name__)
 
 #print(config)
 #Initiate MySql Connection from flask app
-'''
+
 app.config['MYSQL_HOST'] = config['MYSQL_HOST']
 app.config['MYSQL_USER'] = config['MYSQL_USER']
 app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
-#print(config)
+print(config)
 mysql = MySQL(app)
-''' 
 #Creating a connection cursor
 #cursor = mysql.connection.cursor()
 #Executing SQL Statements
@@ -49,46 +51,49 @@ def marks():
         return "Get is blocked"
     return render_template('marks.html', result = dict)
 
-
 @app.route('/')
 def admin():
     """Default route, redirects to site-map"""
-    '''
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('CREATE TABLE test(ID int,NAME varchar(20),AGE int)')
-    time.sleep(2)
-    cursor.execute('INSERT INTO test values(1,"Adi",23);INSERT INTO test values(2,"Ram",24)')
-    cursor.execute('select * from test')
-    data=cursor.fetchone()
-    print(data)
-    '''
+    #cursor = mysql.connection.cursor()
+    #cursor.execute("SELECT 'KILL' + CAST(session_id AS VARCHAR(10)) FROM sys.dm_exec_sessions WHERE is_user_process = 1 AND database_id = DB_ID('sql6439896')")
+    #time.sleep(2)
+    #cursor.execute("select * from developers")
     #Saving the Actions performed on the DB 
     #mysql.connection.commit()
-    return redirect(url_for('help'))
-@app.route('/api')
-def api():
-    """Default route, redirects to sitemap"""
-    return redirect(url_for('help'))
+    
+    #print(cursor.fetchone())
+    #cursor.close()
+    return redirect(url_for('default'))
+
+@app.route("/dev_register",methods = ['GET'])
+def dev_register():
+    return render_template('Register.html')
+
+@app.route('/devregisterdb',methods=['POST'])
+def devregisterdb():
+    
+    if request.method == 'POST':
+        newdev = {}
+        newdev["dev_name"] = request.form["name"]
+        newdev["dev_email"] = request.form["email"]
+        newdev["dev_phone"] = request.form["phone"]
+        newdev["dev_city"] = request.form["city"]
+        newdev["dev_age"] = request.form["age"]
+        print(newdev)
+        try:
+            cursor = mysql.connection.cursor()
+            query = "INSERT INTO developers values(\""+ newdev["dev_name"] + "\",\"" + newdev["dev_email"] + "\"," + str(newdev["dev_phone"]) + ",\"" + newdev["dev_city"] + "\"," +str(newdev["dev_age"])+ ")"
+            print(query)
+            cursor.execute(query)
+            cursor.close()
+            return render_template('reg_status.html',status="Successful",details=newdev)
+        except Exception as e:
+            print("/deveregisterdb -> ",e)
+            return render_template('reg_status.html',status="Fail")
+
 @app.route('/api')
 def default():
-    return "<h2 align=\"center\">Flask App V1.0</h2>"
-@app.route('/user/<name>')
-def user(name):
-    if name=='adithya':
-        return "Let's redirect you to : " + str(url_for('admin'))
-    else:
-        return f"Tester Logged in : {name}"
-@app.route('/success/<name>&<phone>' ,methods=['POST','GET'])
-def success(name,phone):
-    """Login Screen post ethod redirects to here"""
-    if request.method == 'GET':
-        return render_template('success.html',name=name,phone=phone)
-    else:
-        return "Method Blocked"
-@app.route('/fail/<name>')
-def fail(name):
-    """Login screen get method is blocked and redirected to here"""
-    return f"I don't know you! Just stay away from me {name}!!!"
+    return "<h2 align=\"center\">Flask App V1.0</h2><br><a href='/api/help'>Click Here for Help</a>"
 
 @app.route('/validate', methods = ['POST','GET'])
 def validate():
@@ -120,4 +125,4 @@ def charts():
     """Demo of google charts on static data"""
     return render_template('gcharts.html')
 if __name__ == '__main__':
-    app.run('0.0.0.0',4444,True)
+    app.run('127.0.0.1',4444,True)
