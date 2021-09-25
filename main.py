@@ -22,7 +22,7 @@ app.config['MYSQL_HOST'] = config['MYSQL_HOST']
 app.config['MYSQL_USER'] = config['MYSQL_USER']
 app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
-print(config)
+#print(config)
 mysql = MySQL(app)
 #Creating a connection cursor
 #cursor = mysql.connection.cursor()
@@ -53,16 +53,7 @@ def marks():
 
 @app.route('/')
 def admin():
-    """Default route, redirects to site-map"""
-    #cursor = mysql.connection.cursor()
-    #cursor.execute("SELECT 'KILL' + CAST(session_id AS VARCHAR(10)) FROM sys.dm_exec_sessions WHERE is_user_process = 1 AND database_id = DB_ID('sql6439896')")
-    #time.sleep(2)
-    #cursor.execute("select * from developers")
-    #Saving the Actions performed on the DB 
-    #mysql.connection.commit()
-    
-    #print(cursor.fetchone())
-    #cursor.close()
+    """Default route, redirects to API HOME"""
     return redirect(url_for('default'))
 
 @app.route("/dev_register",methods = ['GET'])
@@ -79,18 +70,20 @@ def devregisterdb():
         newdev["dev_phone"] = request.form["phone"]
         newdev["dev_city"] = request.form["city"]
         newdev["dev_age"] = request.form["age"]
-        print(newdev)
+        #print(newdev)
         try:
             cursor = mysql.connection.cursor()
             query = "INSERT INTO developers values(\""+ newdev["dev_name"] + "\",\"" + newdev["dev_email"] + "\"," + str(newdev["dev_phone"]) + ",\"" + newdev["dev_city"] + "\"," +str(newdev["dev_age"])+ ")"
             print(query)
             cursor.execute(query)
+            cursor.commit()
             cursor.close()
             return render_template('reg_status.html',status="Successful",details=newdev)
+        
         except Exception as e:
             print("/deveregisterdb -> ",e)
             return render_template('reg_status.html',status="Fail")
-
+            
 @app.route('/api')
 def default():
     return "<h2 align=\"center\">Flask App V1.0</h2><br><a href='/api/help'>Click Here for Help</a>"
@@ -107,6 +100,7 @@ def validate():
         return redirect(url_for('fail'))
     else:
         return redirect(url_for('fail'))
+
 @app.route('/login')
 def login():
     """Login Screen"""
@@ -120,9 +114,11 @@ def help():
         if rule.endpoint != 'static':
             func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
     return render_template('site-map.html', result = func_list)
+
 @app.route('/charts',methods=['GET'])
 def charts():
     """Demo of google charts on static data"""
     return render_template('gcharts.html')
+
 if __name__ == '__main__':
     app.run('127.0.0.1',4444,True)
