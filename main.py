@@ -1,21 +1,33 @@
-from flask import Flask,render_template,jsonify
-from flask.globals import request
-from flask.helpers import url_for
-from werkzeug.utils import redirect
+from flask import Flask,render_template,jsonify,url_for,redirect,request
+'''
 from flask_mysqldb import MySQL
 import json
-#Craete an object of Flak class
-app = Flask(__name__)
+import MySQLdb.cursors
+import re
+import time
+
 #Read MySql Config from json
 config = json.load(open("config.json",'r'))
+'''
+#Craete an object of Flak class
+app = Flask(__name__)
+
+#print(config)
 #Initiate MySql Connection from flask app
+'''
 app.config['MYSQL_HOST'] = config['MYSQL_HOST']
 app.config['MYSQL_USER'] = config['MYSQL_USER']
 app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
 #print(config)
-mysql = MySQL(app) 
-
+mysql = MySQL(app)
+''' 
+#Creating a connection cursor
+#cursor = mysql.connection.cursor()
+#Executing SQL Statements
+#cursor.execute('select * from test')
+#data = cursor.fetchone()
+#print(data)
 #Closing the cursor
 #cursor.close()
 #Routers
@@ -40,12 +52,18 @@ def marks():
 
 @app.route('/')
 def admin():
-    #Creating a connection cursor
-    #cursor = mysql.connection.cursor()
-    #Executing SQL Statements
+    """Default route, redirects to site-map"""
+    '''
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('CREATE TABLE test(ID int,NAME varchar(20),AGE int)')
+    time.sleep(2)
+    cursor.execute('INSERT INTO test values(1,"Adi",23);INSERT INTO test values(2,"Ram",24)')
+    cursor.execute('select * from test')
+    data=cursor.fetchone()
+    print(data)
+    '''
     #Saving the Actions performed on the DB 
     #mysql.connection.commit()
-    """Default route, redirects to site-map"""
     return redirect(url_for('help'))
 @app.route('/api')
 def api():
@@ -102,4 +120,4 @@ def charts():
     """Demo of google charts on static data"""
     return render_template('gcharts.html')
 if __name__ == '__main__':
-    app.run('127.0.0.1',4444,True)
+    app.run('0.0.0.0',4444,True)

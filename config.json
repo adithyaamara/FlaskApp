@@ -1,6 +1,6 @@
 {
-    "MYSQL_HOST" : "34.69.247.160",
-    "MYSQL_USER" : "adithya",
-    "MYSQL_PASSWORD" : "root_1234",
-    "MYSQL_DB" : "flaskapp"
+    "MYSQL_HOST" : "sql6438164.caisdoeabzq0.us-east-1.rds.amazonaws.com",
+    "MYSQL_USER" : "sql6438164",
+    "MYSQL_PASSWORD" : "FmsksPiPWY",
+    "MYSQL_DB" : "sql6438164"
 }

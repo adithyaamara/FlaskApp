@@ -7,7 +7,8 @@ RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY main.py /app/main.py
-COPY templates/ app/templates
+COPY config.json /app/config.json
+COPY templates/ /app/templates
 COPY /static/ /app/static
 EXPOSE 4444
-CMD [ "python3", "-u", "./main.py" ]
+CMD [ "python3", "./main.py" ]
