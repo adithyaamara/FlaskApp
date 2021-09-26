@@ -31,7 +31,14 @@
       <div class="alert alert-info" role="alert">
           <marquee behavior="scroll" direction="left">Login For Admins / Verified developers only! If you are a developer please login with UserID as mobile number.</marquee>
       </div>
-    <br><br>
+    {% if err %}
+        <div class="alert alert-danger" role="alert" id="alert">
+            Invalid Username or Password!! <button class="btn btn-outline-danger btn-sm"><a href='/login'>Try Again</a></button>
+            <button type="button" class="close" aria-label="Close" onclick='document.getElementById("alert").remove()'>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
     <form action="/validate" method="post">
         <div style="background-color: lightgray; width: 350px; height: 250px;position: relative; left: 490px;" >
             <br><br>

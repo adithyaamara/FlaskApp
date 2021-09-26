@@ -1,5 +1,3 @@
-from os import name
-from typing_extensions import ParamSpec
 from flask import Flask,render_template,url_for,redirect,request,session
 from flask_mysqldb import MySQL
 import json
@@ -56,6 +54,8 @@ def admin():
 def home():
     if session:
         return render_template('home.html')
+    else:
+         return redirect(url_for('login'))
 
 @app.route("/dev_register",methods = ['GET'])
 def dev_register():
@@ -113,18 +113,33 @@ def validate():
             session["loggedin"] = True
             session["userid"] = acc[2]
             session["name"] = acc[1]
+            query = "select count(PHONE) from developers"
+            cursor.execute(query)
+            acc = cursor.fetchone()
+            session['pr'] = acc[0]
             cursor.close()
             return redirect(url_for('home'))
         else:
-            return "<h2>Unauthorized Access!! <a href='/login'>Try Aagain</a></h2>"
+            return render_template('login.html',err = "True")
+
+#Approvals page
+@app.route('/approvals',methods=['GET'])
+def approvals():
+    if session:
+        cursor = mysql.connection.cursor()
+        query = "select * from developers"
+        cursor.execute(query)
+        records = cursor.fetchall()
+        return render_template('approvals.html',records=records)
+    else:
+        return redirect(url_for(login))
+
 #Admin Logout function...
 @app.route('/logout')
 def logout():
     if session is None:
         return redirect(url_for('login'))
-    session.pop('loggedin', None)
-    session.pop('userid', None)
-    session.pop('name', None)
+    session.clear()
     return redirect(url_for('login'))
 
 @app.route('/api/help', methods = ['GET'])
