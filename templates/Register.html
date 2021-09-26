@@ -9,8 +9,30 @@
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 </head>
 <body align="center" style="background-color: azure;">
-    <br><br>
-    <div class="row justify-content-center">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+        <a class="navbar-brand" href="#"><b>FlaskApp:V1.0</b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="/api/home">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="/api/help">Features</a>
+            {% if session['name'] %}
+                <a class="nav-item nav-link" href="/logout" onclick='return confirm("Do you really want to logout?")'>Logout</a>
+            {% else %}
+                <a class="nav-item nav-link" href="/login">Login</a>
+            {% endif %}
+            <a class="nav-item nav-link" href="#">Join Us</a>
+          </div>
+        </div>
+      </nav>
+      <br>
+    <marquee behavior="scroll" direction="left">
+        <p style="font-size: small;"><span class="badge badge-pill badge-warning">Notice</span> Please Wait atleast 2 working days for your registration to be validated. Relax, your registration status will be notified via your Email.</p>
+    </marquee>
+    <br>
+    <div class="row justify-content-center" id="form">
         <div class="col-auto">
             <form action="/devregisterdb" method="POST">
                 <table class="table table-striped">
@@ -42,5 +64,6 @@
             </form>
         </div>
       </div>
+    {% extends 'reg_status.html' %}
 </body>
 </html>

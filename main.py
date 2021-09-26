@@ -1,4 +1,6 @@
-from flask import Flask,render_template,jsonify,url_for,redirect,request
+from os import name
+from typing_extensions import ParamSpec
+from flask import Flask,render_template,url_for,redirect,request,session
 from flask_mysqldb import MySQL
 import json
 import time
@@ -15,6 +17,9 @@ app.config['MYSQL_HOST'] = config['MYSQL_HOST']
 app.config['MYSQL_USER'] = config['MYSQL_USER']
 app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
+
+app.secret_key = config["APP_SECRET"]
+
 mysql = MySQL(app)
 
 #Routes
@@ -42,10 +47,15 @@ def marks():
 @app.route('/',methods = ['GET'])
 def admin():
     """Default route, redirects to API HOME"""
-    return redirect(url_for('home'))
-@app.route('/api',methods = ['GET'])
+    if session:
+        return redirect(url_for('home'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/api/home',methods = ['GET'])
 def home():
-    return "<h2 align=\"center\">Flask App V1.0 - Home Page to be built</h2><br><a href='/api/help'>Click Here for Help</a>"
+    if session:
+        return render_template('home.html')
 
 @app.route("/dev_register",methods = ['GET'])
 def dev_register():
@@ -68,7 +78,7 @@ def devregisterdb():
             cursor.execute(query)
             if cursor.fetchone() is not None:
                 cursor.close()
-                return render_template('reg_status.html',status="duplicate")
+                return render_template('Register.html',status="duplicate")
             else:
                 query = "INSERT INTO developers values(\""+ str(newdev["dev_name"]) + "\",\"" + str(newdev["dev_email"]) + "\",\"" + str(newdev["dev_phone"]) + "\",\"" + str(newdev["dev_city"]) + "\"," + (newdev["dev_age"])+ ")"
                 #print(query)
@@ -76,15 +86,18 @@ def devregisterdb():
                 time.sleep(2)
                 mysql.connection.commit()
                 cursor.close()
-                return render_template('reg_status.html',status="Successful",details=newdev)
+                return render_template('Register.html',status="Successful",details=newdev)
         except Exception as e:
             print("/deveregisterdb -> ",e)
-            return render_template('reg_status.html',status="Fail")
+            return render_template('Register.html',status="Fail")
 #Admin Login and validation#
 @app.route('/login')
 def login():
     """Login Screen"""
-    return render_template('login.html')
+    if session:
+        return redirect(url_for('home'))
+    else:
+        return render_template('login.html')
 
 @app.route('/validate', methods = ['POST'])
 def validate():
@@ -95,11 +108,24 @@ def validate():
         query = "SELECT * FROM admins WHERE phone=\"" + str(id) + "\" and pwd=\"" + str(pwd) + "\" LIMIT 1"
         cursor = mysql.connection.cursor()
         cursor.execute(query)
-        if cursor.fetchone() is not None:   
+        acc = cursor.fetchone()
+        if acc is not None:   
+            session["loggedin"] = True
+            session["userid"] = acc[2]
+            session["name"] = acc[1]
             cursor.close()
-            return f"Login Succesful [Need to redirect to admin dashboard]! Welcome Admin ID- {id}"
+            return redirect(url_for('home'))
         else:
             return "<h2>Unauthorized Access!! <a href='/login'>Try Aagain</a></h2>"
+#Admin Logout function...
+@app.route('/logout')
+def logout():
+    if session is None:
+        return redirect(url_for('login'))
+    session.pop('loggedin', None)
+    session.pop('userid', None)
+    session.pop('name', None)
+    return redirect(url_for('login'))
 
 @app.route('/api/help', methods = ['GET'])
 def help():
@@ -110,10 +136,10 @@ def help():
             func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
     return render_template('site-map.html', result = func_list)
 
-@app.route('/charts',methods=['POST','GET'])
+@app.route('/charts',methods=['GET'])
 def charts():
     """Demo of google charts on static data"""
-    if request.method == 'POST':
+    if request.method == 'GET' and session:
         return render_template('gcharts.html')
     else:
         return redirect(url_for('login'))

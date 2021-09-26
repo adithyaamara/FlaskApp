@@ -4,10 +4,36 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <title>App Home</title>
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+        <a class="navbar-brand" href="#"><b>FlaskApp:V1.0</b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="/api/help">Features</a>
+            {% if session['name'] %}
+                <a class="nav-item nav-link" href="/logout" onclick='return confirm("Do you really want to logout?")'>Logout</a>
+            {% else %}
+                <a class="nav-item nav-link" href="/login">Login</a>
+            {% endif %}
+            <a class="nav-item nav-link" href="/dev_register">Join Us</a>
+          </div>
+        </div>
+      </nav>
+    <div class="alert alert-success" role="alert" id="greet">
+        Currently Logged in : <b>{{session['name']}}</b>
+        <button type="button" class="close" aria-label="Close" onclick='document.getElementById("greet").remove()'>
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <br>
+    <h2>Flask App V1.0 - Home Page to be built</h2><br>
 </body>
 </html>

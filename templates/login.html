@@ -21,23 +21,35 @@
     }
 </script>
 </head>
-<body bgcolor="cyan" align="center">
+<body bgcolor="cyan" align="center" style="background-image: url();">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+        <a class="navbar-brand" href="#"><b>FlaskApp:V1.0</b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </nav>
+      <div class="alert alert-info" role="alert">
+          <marquee behavior="scroll" direction="left">Login For Admins / Verified developers only! If you are a developer please login with UserID as mobile number.</marquee>
+      </div>
     <br><br>
     <form action="/validate" method="post">
-        <table align="center" cellpadding=3px cellspacing=3px>
-            <tr>
-                <th>User ID : </th>
-                <td><input type="text" name="id" required></td>
-            </tr>
-            <tr>
-                <th>Password : </th>
-                <td><input type="password" name="pwd" required></td>
-            </tr>
-            <tr align="center">
-                <td><input type="submit" class="btn btn-outline-success" onclick="notif()" value="submit"></td>
-                <td><input type="reset" class="btn btn-outline-danger" onclick=resetform() value="Reset"></td>
-            </tr>
-        </table>
+        <div style="background-color: lightgray; width: 350px; height: 250px;position: relative; left: 490px;" >
+            <br><br>
+            <table align="center" style="width: 300px;">
+                <tr>
+                    <th><label for="id">User ID : </label> </th>
+                    <td><input type="text" name="id" required></td>
+                </tr>
+                <tr>
+                    <th><label for="pwd">Password : </label> </th>
+                    <td><input type="password" name="pwd" required></td>
+                </tr>
+                <tr align="center">
+                    <td><input type="submit" class="btn btn-outline-success" onclick="notif()" value="submit"></td>
+                    <td><input type="reset" class="btn btn-outline-danger" onclick=resetform() value="Reset"></td>
+                </tr>
+            </table>
+        </div> 
     </form>
     <div role="alert "id="alert" style="position: absolute;top: 0;right: 0;width: 10cm;">
     </div>
