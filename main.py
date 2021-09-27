@@ -4,6 +4,7 @@ import json
 import time
 import string
 import random
+import smtplib, ssl
 #Read MySql Config from json
 config = json.load(open("config.json",'r'))
 #print(config)
@@ -16,12 +17,22 @@ app.config['MYSQL_HOST'] = config['MYSQL_HOST']
 app.config['MYSQL_USER'] = config['MYSQL_USER']
 app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
-
+#Flask App secret
 app.secret_key = config["APP_SECRET"]
 
+#Mysql Initialization
 mysql = MySQL(app)
 
-
+#Email Mechanism Initialization
+port = 465
+password = config["email_pass"]
+context = ssl.create_default_context()
+with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+    try:
+        server.login("vboxlinux32other@gmail.com", password)
+        print("Authentication Successful.......!!")
+    except Exception as e:
+        print("Email server error : ",e)
 #-------password generator-------#
 lower = string.ascii_lowercase
 upper = string.ascii_uppercase
@@ -213,7 +224,7 @@ def process(d,id):
     else:
         return(redirect(url_for('login')))
 #----------------------------------------#
-#----------------------------------------#
+#------------Registered Developers Viewer-------------------#
 @app.route('/get_devs')
 def get_devs():
     if session:
@@ -227,6 +238,35 @@ def get_devs():
         return render_template("verified_devs.html",rec=rec)
     else:
         return redirect(url_for('login'))
+#-----------Service Requests------------------#
+@app.route('/devsr',methods=['GET'])
+def request_form():
+    return render_template('dev_services.html')
+@app.route('/devsr/send',methods=['POST','GET'])
+def sendmail():
+    if request.method=='GET':
+        return redirect(url_for('request_form'))
+    email = request.form["email"]
+    try:
+        cursor = mysql.connection.cursor() 
+    except Exception as e:
+        return render_template('dev_services.html',err="db")
+    query = "select PWD from verified_devs where EMAIL=\"" + email + "\""
+    cursor.execute(query)
+    pwd = cursor.fetchone()
+    if pwd is None:
+        return render_template('dev_services.html',err="unregistered")
+    pwd = pwd[0]
+    sender_email = "vboxlinux32other@gmail.com"
+    SUBJECT = "Response to your recent service request with flask app!!"
+    TEXT = "Your password for the Flask portal is : " + pwd
+    message = 'Subject: {}\n\n{}'.format(SUBJECT, TEXT)
+    try:
+        server.sendmail(sender_email, email, message)
+        return render_template('dev_services.html',err="Successful")
+    except Exception as e:
+        print("Something Wrong with the SMTP Server!!!!!!!!!!!!! :" ,e)
+        return render_template('dev_services.html',err="db")
 #----------------------------------------#
 #Admin Logout function...
 @app.route('/logout')
@@ -254,4 +294,6 @@ def charts():
         return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run('127.0.0.1',4444,True)
+    config = json.load(open("config.json",'r'))
+    Interface = config["App_Interface"]
+    app.run(Interface,4444,True)
