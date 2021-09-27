@@ -35,8 +35,9 @@
         </button>
     </div>
     <br>
-    <h2 align="center">Flask App V1.0 - Home Page - Development in progress</h2><br>
-    <div class="card card-hover" style="width: 18rem;left: 12px;">
+    <marquee behavior="scroll" direction="left"><p>Flask App V1.0 - Home Page - Development in progress</p></marquee>
+    <br>
+    <div class="card card-hover" style="width: 18rem;left: 12px;display: inline-block;">
       <div class="card-body">
         {% if session['pr'] %}
           <button class="btn btn-info" style="width: 240px;">
@@ -46,6 +47,18 @@
         <h5 class="card-title">Devloper Registrations</h5>
         <p class="card-text"> View total number of pending developer registrations received under campaign, approve each of them.</p>
         <a href="/approvals" class="btn btn-primary stretched-link">Approvals</a>
+      </div>
+    </div>
+    <div class="card card-hover" style="width: 18rem;left: 35px;display: inline-block;">
+      <div class="card-body">
+        {% if session['rd'] %}
+          <button class="btn btn-info" style="width: 240px;">
+            <b style="font-size: 75px;">{{session['rd']}}</b>
+          </button>
+        {% endif %}
+        <h5 class="card-title">Approved Devlopers</h5>
+        <p class="card-text"> View total number of approved developers in campaign.<br><br><br></p>
+        <a href="/get_devs" class="btn btn-primary stretched-link">Details >></a>
       </div>
     </div>
 </body>

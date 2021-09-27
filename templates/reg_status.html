@@ -10,6 +10,7 @@
 <body>
 {% if status %}
     {% if status == "Successful" %}
+        {% set logo = "/static/icons/check-lg.svg" %}
         {% set status = "Registration Succesful. You can login to our portal now!!" %}
         {% set class = "alert-success" %}
         {% set link = "" %}
@@ -17,17 +18,27 @@
         {% set status = "Something Went wrong. Registartion Failed!!!" %}
         {% set link = "Try Again" %}
         {% set class = "alert-danger" %}
-    {% elif status == "duplicate" %}
-        {% set status = "User with specified details already exists!!!" %}
+    {% elif status == "dup_ph" %}
+        {% set logo = "/static/icons/x-circle-fill.svg" %}
+        {% set status = "Mobile Number Already in use!!!" %}
+        {% set link = "Try Again" %}
+        {% set class = "alert-danger" %}
+    {% elif status == "dup_email" %}
+        {% set logo = "/static/icons/x-circle-fill.svg" %}
+        {% set status = "Email ID is already in use!!!" %}
+        {% set link = "Try Again" %}
+        {% set class = "alert-danger" %}
+    {% elif status == "unavailable" %}
+        {% set status = "Sorry, Service is temporarily unavailable!!!" %}
         {% set link = "Try Again" %}
         {% set class = "alert-danger" %}
     {% else %}
         {% set status = "Unknown Error!!!" %}
         {% set link = "Try Again" %}
         {% set class = "alert-danger" %}
-    {% endif %}
+{% endif %}
 <div class="alert {{class}}" role="alert" id="alert">
-    {{status}} <a href="/dev_register">{{link}} </a>
+    <img src='{{logo}}' alt=''> {{status}} <a href="/dev_register">{{link}} </a>
     <button type="button" class="close" aria-label="Close" onclick='document.getElementById("alert").remove()'>
         <span aria-hidden="true">&times;</span>
     </button>
