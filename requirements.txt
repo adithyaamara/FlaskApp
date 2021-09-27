@@ -1,4 +1,7 @@
-Flask_MySQLdb==0.2.0
 Flask==2.0.1
+Flask_Mail==0.9.1
+Flask_MySQLdb==0.2.0
 json
 time
+string
+random

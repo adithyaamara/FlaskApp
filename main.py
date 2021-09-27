@@ -4,7 +4,7 @@ import json
 import time
 import string
 import random
-import smtplib, ssl
+from flask_mail import Mail, Message
 #Read MySql Config from json
 config = json.load(open("config.json",'r'))
 #print(config)
@@ -19,20 +19,20 @@ app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
 app.config['MYSQL_DB'] = config['MYSQL_DB']
 #Flask App secret
 app.secret_key = config["APP_SECRET"]
-
 #Mysql Initialization
 mysql = MySQL(app)
-
 #Email Mechanism Initialization
-port = 465
-password = config["email_pass"]
-context = ssl.create_default_context()
-with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-    try:
-        server.login("vboxlinux32other@gmail.com", password)
-        print("Authentication Successful.......!!")
-    except Exception as e:
-        print("Email server error : ",e)
+app.config['MAIL_SERVER']=config["MAIL_SERVER"]
+app.config['MAIL_PORT'] = config["MAIL_PORT"]
+app.config['MAIL_USERNAME'] = config["MAIL_USERNAME"]
+app.config['MAIL_PASSWORD'] = config["MAIL_PASSWORD"]
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+try:
+    mail = Mail(app)
+    print("Authentication Successful.......!!")
+except Exception as e:
+    print("Email server error : ",e)
 #-------password generator-------#
 lower = string.ascii_lowercase
 upper = string.ascii_uppercase
@@ -257,12 +257,17 @@ def sendmail():
     if pwd is None:
         return render_template('dev_services.html',err="unregistered")
     pwd = pwd[0]
-    sender_email = "vboxlinux32other@gmail.com"
+    sender_email = config["MAIL_USERNAME"]
     SUBJECT = "Response to your recent service request with flask app!!"
     TEXT = "Your password for the Flask portal is : " + pwd
-    message = 'Subject: {}\n\n{}'.format(SUBJECT, TEXT)
+    msg = Message(
+                SUBJECT,
+                sender =sender_email,
+                recipients = [email]
+               )
+    msg.body = TEXT
     try:
-        server.sendmail(sender_email, email, message)
+        mail.send(msg)
         return render_template('dev_services.html',err="Successful")
     except Exception as e:
         print("Something Wrong with the SMTP Server!!!!!!!!!!!!! :" ,e)

@@ -9,12 +9,18 @@ A Python - Flask application to demonstrate possible functionalities of Flask Fr
     "MYSQL_PASSWORD" : "your_password",
     "MYSQL_DB" : "sqldbname",
     "APP_SECRET" : "XXXXXXXXXXXXXX",
-    "RandomPassLength" : 10
+    "RandomPassLength" : 10,
+    "App_Interface" : "127.0.0.1",
+    "MAIL_PASSWORD" : "xxxxxxx",
+    "MAIL_SERVER" : "smtp.gmail.com",
+    "MAIL_PORT" : 465,
+    "MAIL_USERNAME" : "xxxxxxxxxx@gmail.com"
 }
 ```
 *MYSQL_XXXXX* : DATABASE related config.
 *APP_SECRET* : Used to hash the browser session cookies to avoid cookie tampering attack.
 *RandomPassLength* : Once a developer is verified, will get a randomly generated password of length specified here 
+*MAIL_XXXX* : Relavant email server config for sending mails to developers using Flask_MySQLdb package. 
 
 # Requirements:
 - A mysql db  with above configuration, following tables.
