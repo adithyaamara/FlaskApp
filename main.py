@@ -106,7 +106,11 @@ def validate():
         id = request.form['id']
         pwd = request.form['pwd']
         query = "SELECT * FROM admins WHERE phone=\"" + str(id) + "\" and pwd=\"" + str(pwd) + "\" LIMIT 1"
-        cursor = mysql.connection.cursor()
+        try:
+            cursor = mysql.connection.cursor()
+        except Exception as e:
+            print("DB Error : ",e)
+            return render_template('login.html',err = "conn_err")
         cursor.execute(query)
         acc = cursor.fetchone()
         if acc is not None:   
