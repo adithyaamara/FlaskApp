@@ -8,11 +8,13 @@ A Python - Flask application to demonstrate possible functionalities of Flask Fr
     "MYSQL_USER" : "sqlabcd123",
     "MYSQL_PASSWORD" : "your_password",
     "MYSQL_DB" : "sqldbname",
-    "APP_SECRET" : "XXXXXXXXXXXXXX"
+    "APP_SECRET" : "XXXXXXXXXXXXXX",
+    "RandomPassLength" : 10
 }
 ```
-
+*MYSQL_XXXXX* : DATABASE related config.
 *APP_SECRET* : Used to hash the browser session cookies to avoid cookie tampering attack.
+*RandomPassLength* : Once a developer is verified, will get a randomly generated password of length specified here 
 
 # Requirements:
 - A mysql db  with above configuration, following tables.
