@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 </head>
-<body align="center">
+<body>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
         <a class="navbar-brand" href="#"><b>FlaskApp:V1.0</b></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,16 +18,21 @@
           <div class="navbar-nav">
             <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="#">Features</a>
+            <a class="nav-item nav-link" href="/dev_register">Join Us</a>
+            <a class="nav-item nav-link" href="/devsr">Request Password</a>
             {% if session['name'] %}
                 <a class="nav-item nav-link" href="/logout" onclick='return confirm("Do you really want to logout?")'>Logout</a>
             {% else %}
                 <a class="nav-item nav-link" href="/login">Login</a>
             {% endif %}
-            <a class="nav-item nav-link" href="/dev_register">Join Us</a>
           </div>
         </div>
     </nav>
-      <br>
+      <div class="alert alert-warning">
+        <marquee behavior="scroll" direction="left">
+          Build Card model help screen or sliding cards model..
+        </marquee>
+      </div>
     <table align="center" border=1 class="table table-striped table-bordered table-hover table-sm">
         <thead class="thead-dark">
             <th scope="col">URL</th>

@@ -18,12 +18,13 @@
           <div class="navbar-nav">
             <a class="nav-item nav-link active" href="/api/home">Home <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="/api/help">Features</a>
+            <a class="nav-item nav-link" href="/dev_register">Join Us</a>
+            <a class="nav-item nav-link" href="/devsr">Request Password</a>
             {% if session['name'] %}
                 <a class="nav-item nav-link" href="/logout" onclick='return confirm("Do you really want to logout?")'>Logout</a>
             {% else %}
                 <a class="nav-item nav-link" href="/login">Login</a>
             {% endif %}
-            <a class="nav-item nav-link" href="/dev_register">Join Us</a>
           </div>
         </div>
       </nav>
