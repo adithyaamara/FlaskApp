@@ -23,14 +23,14 @@ app.register_blueprint(admin)
 app.register_blueprint(view)
 
 #Initiate MySql Connection from flask app
-app =db_conn(app).create_connection()
+app =db_conn(app,config).create_connection()
 mysql = MySQL(app)
 
 #Flask App secret
 app.secret_key = config["APP_SECRET"]
 
 #Email Mechanism Initialization
-app = email_conn(app).create_connection()
+app = email_conn(app,config).create_connection()
 try:
     mail = Mail(app)
     print("Authentication Successful.......!!")
@@ -149,7 +149,7 @@ def process(d,id):
             query = "select * from developers where PHONE=\""+id+"\" LIMIT 1"
             cursor.execute(query)
             rec = cursor.fetchone()
-            randompass = pwd_gen(int(config["RandomPassLength"])).genarate()
+            randompass = pwd_gen(int(config["RandomPassLength"])).genarate() #Using pwd_gen class' generate method for password generation
             if rec:
                 query = "INSERT INTO verified_devs values(\""+ "\",\"" + str(rec[0]) + "\",\"" + str(rec[1]) + "\",\"" + str(rec[2]) + "\",\"" + str(rec[3]) + "\"," + str(rec[4]) +",\""+randompass+"\")"
                 try:
