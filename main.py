@@ -2,9 +2,15 @@ from flask import Flask,render_template,url_for,redirect,request,session
 from flask_mysqldb import MySQL
 import json
 import time
-import string
-import random
 from flask_mail import Mail, Message
+
+from addons.email_connector import email_conn
+from addons.password_gen import pwd_gen
+
+#Import blueprints for guest and amin routes
+from guest.views import view
+from admin.views import admin
+from addons.db_connector import db_conn
 #Read MySql Config from json
 config = json.load(open("config.json",'r'))
 #print(config)
@@ -12,64 +18,26 @@ config = json.load(open("config.json",'r'))
 #Craete an object of Flak class
 app = Flask(__name__)
 
+#Register blueprints
+app.register_blueprint(admin)
+app.register_blueprint(view)
+
 #Initiate MySql Connection from flask app
-app.config['MYSQL_HOST'] = config['MYSQL_HOST']
-app.config['MYSQL_USER'] = config['MYSQL_USER']
-app.config['MYSQL_PASSWORD'] = config['MYSQL_PASSWORD']
-app.config['MYSQL_DB'] = config['MYSQL_DB']
+app =db_conn(app).create_connection()
+mysql = MySQL(app)
+
 #Flask App secret
 app.secret_key = config["APP_SECRET"]
-#Mysql Initialization
-mysql = MySQL(app)
+
 #Email Mechanism Initialization
-app.config['MAIL_SERVER']=config["MAIL_SERVER"]
-app.config['MAIL_PORT'] = config["MAIL_PORT"]
-app.config['MAIL_USERNAME'] = config["MAIL_USERNAME"]
-app.config['MAIL_PASSWORD'] = config["MAIL_PASSWORD"]
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
+app = email_conn(app).create_connection()
 try:
     mail = Mail(app)
     print("Authentication Successful.......!!")
 except Exception as e:
     print("Email server error : ",e)
-#-------password generator-------#
-lower = string.ascii_lowercase
-upper = string.ascii_uppercase
-num = string.digits
-all = lower + upper + num
-length = config["RandomPassLength"]
-#---------------------------------#
 
-#Routes
-
-#------Jinja Templating Example-------------#
-@app.route('/result')
-def display():
-    """Result Grabber with submit and reset"""
-    return render_template('result.html')
-
-@app.route('/marks',methods = ['POST','GET'])
-def marks():
-    """Displays grabbed marks from grabber, with added css"""
-    dict = {}
-    total = 0
-    for k,v in request.form.items():
-        dict[k] = v
-        total = total + float(v)
-    dict["Total"] = total
-    if request.method == 'GET':
-        return "Get is blocked"
-    return render_template('marks.html', result = dict)
-#-----------------------------------------------------------#
-
-@app.route('/',methods = ['GET'])
-def admin():
-    """Default route, redirects to API HOME"""
-    if session:
-        return redirect(url_for('home'))
-    else:
-        return redirect(url_for('login'))
+#Routes -- Transferred to admin,guest views&blueprint
 
 @app.route('/api/home',methods = ['GET'])
 def home():
@@ -89,11 +57,7 @@ def home():
         except Exception as e:
             return render_template('home.html')
     else:
-         return redirect(url_for('login'))
-#------Developer registrations----------------#
-@app.route("/dev_register",methods = ['GET'])
-def dev_register():
-    return render_template('Register.html')
+         return redirect(url_for('admin.login'))
 
 @app.route('/devregisterdb',methods=['POST'])
 def devregisterdb():
@@ -133,15 +97,6 @@ def devregisterdb():
             print("/deveregisterdb -> ",e)
             return render_template('Register.html',status="Fail")
 #---------------------------------------------------------------------------------------------------------------------------------------------------#
-#Admin Login and validation#
-@app.route('/login')
-def login():
-    """Login Screen"""
-    if session:
-        return redirect(url_for('home'))
-    else:
-        return render_template('login.html')
-
 @app.route('/validate', methods = ['POST'])
 def validate():
     """Validates Login Received from Login Screen"""
@@ -180,7 +135,7 @@ def approvals():
         cursor.close()
         return render_template('approvals.html',records=records)
     else:
-        return redirect(url_for(login))
+        return render_template('login.html')
 
 @app.route('/process_entry/<d>/<id>')
 def process(d,id):
@@ -194,14 +149,12 @@ def process(d,id):
             query = "select * from developers where PHONE=\""+id+"\" LIMIT 1"
             cursor.execute(query)
             rec = cursor.fetchone()
-            temp = random.sample(all,length)
-            randompass = "".join(temp)
+            randompass = pwd_gen(int(config["RandomPassLength"])).genarate()
             if rec:
                 query = "INSERT INTO verified_devs values(\""+ "\",\"" + str(rec[0]) + "\",\"" + str(rec[1]) + "\",\"" + str(rec[2]) + "\",\"" + str(rec[3]) + "\"," + str(rec[4]) +",\""+randompass+"\")"
                 try:
                     cursor.execute(query)
                     query = "delete from developers where PHONE=\""+id+"\""
-                    time.sleep(1)
                     cursor.execute(query)
                     mysql.connection.commit()
                     cursor.close()
@@ -273,14 +226,6 @@ def sendmail():
         print("Something Wrong with the SMTP Server!!!!!!!!!!!!! :" ,e)
         return render_template('dev_services.html',err="db")
 #----------------------------------------#
-#Admin Logout function...
-@app.route('/logout')
-def logout():
-    if session is None:
-        return redirect(url_for('login'))
-    session.clear()
-    return redirect(url_for('login'))
-
 @app.route('/api/help', methods = ['GET'])
 def help():
     """Print available functions."""
@@ -289,14 +234,6 @@ def help():
         if rule.endpoint != 'static':
             func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
     return render_template('site-map.html', result = func_list)
-
-@app.route('/charts',methods=['GET'])
-def charts():
-    """Demo of google charts on static data"""
-    if request.method == 'GET' and session:
-        return render_template('gcharts.html')
-    else:
-        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     config = json.load(open("config.json",'r'))
