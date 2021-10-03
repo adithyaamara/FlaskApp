@@ -1,19 +1,18 @@
 from flask import Flask,render_template,url_for,redirect,request,session
-from flask_mysqldb import MySQL
 import json
 import time
 from flask_mail import Mail, Message
 
+from addons.db_connector import db_conn
 from addons.email_connector import email_conn
 from addons.password_gen import pwd_gen
 
 #Import blueprints for guest and amin routes
 from guest.views import view
 from admin.views import admin
-from addons.db_connector import db_conn
+
 #Read MySql Config from json
 config = json.load(open("config.json",'r'))
-#print(config)
 
 #Craete an object of Flak class
 app = Flask(__name__)
@@ -23,8 +22,8 @@ app.register_blueprint(admin)
 app.register_blueprint(view)
 
 #Initiate MySql Connection from flask app
-app =db_conn(app,config).create_connection()
-mysql = MySQL(app)
+db_obj = db_conn(app,config)
+app = db_obj.create_connection()
 
 #Flask App secret
 app.secret_key = config["APP_SECRET"]
@@ -43,16 +42,12 @@ except Exception as e:
 def home():
     if session:
         try:
-            cursor = mysql.connection.cursor()
             query = "select count(PHONE) from developers"
-            cursor.execute(query)
-            acc = cursor.fetchone()
+            acc = db_obj.db_transaction(query,1,False)
             session['pr'] = acc[0] or '0'
             query = "select count(ID) from verified_devs"
-            cursor.execute(query)
-            acc = cursor.fetchone()
+            acc = db_obj.db_transaction(query,1,False)
             session['rd'] = acc[0] or '0'
-            cursor.close()
             return render_template('home.html')
         except Exception as e:
             return render_template('home.html')
@@ -70,28 +65,24 @@ def devregisterdb():
         newdev["dev_age"] = request.form["age"]
         #print(newdev)
         try:
-            try:
-                cursor = mysql.connection.cursor()
-            except Exception as e:
-                return render_template('Register.html',status="unavailable")
             query = "select * from developers WHERE PHONE=\""+str(newdev["dev_phone"])+"\" LIMIT 1"
-            #print(query)
-            cursor.execute(query)
-            if cursor.fetchone() is not None:
-                cursor.close()
+            res = db_obj.db_transaction(query,1,False)
+            if res == "conn_err":
+                res = None
+                return render_template('Register.html',status="unavailable")
+            if res is not None:
+                res = None
                 return render_template('Register.html',status="dup_ph")
+            res = None
             query = "select * from developers WHERE EMAIL=\""+str(newdev["dev_email"])+"\" LIMIT 1"
-            cursor.execute(query)
-            if cursor.fetchone() is not None:
-                cursor.close()
+            res = db_obj.db_transaction(query,1,False)
+            if res is not None:
                 return render_template('Register.html',status="dup_email")
             else:
+                res = None
                 query = "INSERT INTO developers values(\""+ str(newdev["dev_name"]) + "\",\"" + str(newdev["dev_email"]) + "\",\"" + str(newdev["dev_phone"]) + "\",\"" + str(newdev["dev_city"]) + "\"," + (newdev["dev_age"])+ ")"
-                #print(query)
-                cursor.execute(query)
-                time.sleep(2)
-                mysql.connection.commit()
-                cursor.close()
+                res = db_obj.db_transaction(query,2,True)
+                time.sleep(1)
                 return render_template('Register.html',status="Successful",details=newdev)
         except Exception as e:
             print("/deveregisterdb -> ",e)
@@ -104,22 +95,17 @@ def validate():
         id = request.form['id']
         pwd = request.form['pwd']
         query = "SELECT * FROM admins WHERE phone=\"" + str(id) + "\" and pwd=\"" + str(pwd) + "\" LIMIT 1"
-        try:
-            cursor = mysql.connection.cursor()
-        except Exception as e:
+        res = db_obj.db_transaction(query,1,False)
+        if res == "conn_err":
             print("DB Error : ",e)
             return render_template('login.html',err = "conn_err")
-        cursor.execute(query)
-        acc = cursor.fetchone()
-        if acc is not None:   
+        if res is not None:   
             session["loggedin"] = True
-            session["userid"] = acc[2]
-            session["name"] = acc[1]
+            session["userid"] = res[2]
+            session["name"] = res[1]
             query = "select count(PHONE) from developers"
-            cursor.execute(query)
-            acc = cursor.fetchone()
+            acc = db_obj.db_transaction(query,1,False) ##Give 3rd arg is False for all select queries, True for insert queries.
             session['pr'] = acc[0]
-            cursor.close()
             return redirect(url_for('home'))
         else:
             return render_template('login.html',err = "True")
@@ -128,11 +114,8 @@ def validate():
 @app.route('/approvals',methods=['GET'])
 def approvals():
     if session:
-        cursor = mysql.connection.cursor()
         query = "select * from developers"
-        cursor.execute(query)
-        records = cursor.fetchall()
-        cursor.close()
+        records = db_obj.db_transaction(query,2,False)
         return render_template('approvals.html',records=records)
     else:
         return render_template('login.html')
@@ -141,39 +124,33 @@ def approvals():
 def process(d,id):
     if session:
         if d == "A":
-            try:
-                cursor = mysql.connection.cursor()
-            except Exception as e:
-                print("db error : ",e)
-                return f"Service Unavailable..rECEIVED TILL R. Id received {id}"
             query = "select * from developers where PHONE=\""+id+"\" LIMIT 1"
-            cursor.execute(query)
-            rec = cursor.fetchone()
+            rec = db_obj.db_transaction(query,1,False)  #Commit required is False for all select/Read type statements.
+            if rec == "conn_err":
+                return "Database Unavailable! Try again sometime later!!"
             randompass = pwd_gen(int(config["RandomPassLength"])).genarate() #Using pwd_gen class' generate method for password generation
             if rec:
                 query = "INSERT INTO verified_devs values(\""+ "\",\"" + str(rec[0]) + "\",\"" + str(rec[1]) + "\",\"" + str(rec[2]) + "\",\"" + str(rec[3]) + "\"," + str(rec[4]) +",\""+randompass+"\")"
-                try:
-                    cursor.execute(query)
-                    query = "delete from developers where PHONE=\""+id+"\""
-                    cursor.execute(query)
-                    mysql.connection.commit()
-                    cursor.close()
-                except Exception as e:
-                    print("DB Error",e)
-                return("",204)
+                res = db_obj.db_transaction(query,0,True) #For commit true given, 2nd arg "record count to return" is ignored because we don't need return records for commit transactions.
+                if res == "conn_err":
+                    print("DB Error. Transaction Failed")
+                    return("",204)
+                query = "delete from developers where PHONE=\""+id+"\""
+                res = None #Setting res is None to avoid furthur flase positives.
+                res = db_obj.db_transaction(query,0,True)
+                if res == "conn_err":
+                    print("DB Error. Transaction Failed")
+                    return("",204)
+                else:
+                    return("",204)
         if d == "R":
-            try:
-                cursor = mysql.connection.cursor()
-            except Exception as e:
-                print("db error : ",e)
-                return f"Service Unavailable..rECEIVED TILL R. Id received {id}"
             query = "delete from developers where PHONE=\""+id+"\""
-            cursor.execute(query)
-            mysql.connection.commit()
-            cursor.close()
-            return("",204)
-        else:
-            return('',204)            
+            res = db_obj.db_transaction(query,0,True)
+            if res == "conn_err":
+                print("DB Error!!")
+                return("",204)
+            else:
+                return("",204)            
     else:
         return(redirect(url_for('login')))
 #----------------------------------------#
@@ -181,32 +158,29 @@ def process(d,id):
 @app.route('/get_devs')
 def get_devs():
     if session:
-        try:
-            cursor = mysql.connection.cursor()
-        except Exception as e:
-            print("db error : ",e)
         query = "select * from verified_devs"
-        cursor.execute(query)
-        rec = cursor.fetchall()
-        return render_template("verified_devs.html",rec=rec)
+        rec = db_obj.db_transaction(query,2,False)
+        if rec == "conn_err":
+            print("DB error!!!")
+            return("",204)
+        else:
+            return render_template("verified_devs.html",rec=rec)
     else:
         return redirect(url_for('login'))
 #-----------Service Requests------------------#
-@app.route('/devsr',methods=['GET'])
+@app.route('/devsr',methods=['GET']) #Serves form template for passwordd request
 def request_form():
     return render_template('dev_services.html')
-@app.route('/devsr/send',methods=['POST','GET'])
+
+@app.route('/devsr/send',methods=['POST','GET'])  #Handles POST request arrived from dev_services.html
 def sendmail():
     if request.method=='GET':
         return redirect(url_for('request_form'))
     email = request.form["email"]
-    try:
-        cursor = mysql.connection.cursor() 
-    except Exception as e:
+    query = "select PWD from verified_devs where EMAIL=\"" + email + "\"LIMIT 1"
+    pwd = db_obj.db_transaction(query,1,False)
+    if pwd == "conn_err":
         return render_template('dev_services.html',err="db")
-    query = "select PWD from verified_devs where EMAIL=\"" + email + "\""
-    cursor.execute(query)
-    pwd = cursor.fetchone()
     if pwd is None:
         return render_template('dev_services.html',err="unregistered")
     pwd = pwd[0]
