@@ -33,3 +33,7 @@ def charts():
     """Demo of google charts on static data"""
     if request.method == 'GET':
         return render_template('gcharts.html')
+#----------------------------------------#
+@view.route('/devsr',methods=['GET']) #Serves form template for password request
+def request_form():
+    return render_template('dev_services.html')

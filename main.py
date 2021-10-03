@@ -1,7 +1,6 @@
 from flask import Flask,render_template,url_for,redirect,request,session
 import json
 import time
-from flask_mail import Mail, Message
 
 from addons.db_connector import db_conn
 from addons.email_connector import email_conn
@@ -22,20 +21,16 @@ app.register_blueprint(admin)
 app.register_blueprint(view)
 
 #Initiate MySql Connection from flask app
-db_obj = db_conn(app,config)
-app = db_obj.create_connection()
+db_obj = db_conn(app,config)  #Creating Object of class database_conn,
+app = db_obj.create_connection() #Using create method of mail_obj to get mail configured flask app in return.
 
 #Flask App secret
 app.secret_key = config["APP_SECRET"]
 
 #Email Mechanism Initialization
-app = email_conn(app,config).create_connection()
-try:
-    mail = Mail(app)
-    print("Authentication Successful.......!!")
-except Exception as e:
-    print("Email server error : ",e)
-
+mail_obj = email_conn(app,config) #Creating Object of class email_conn,
+app = mail_obj.create_connection()  #Using create method of mail_obj to get mail configured flask app in return.
+#Later use db,mail objects to perform db ops, mail ops in any routes.
 #Routes -- Transferred to admin,guest views&blueprint
 
 @app.route('/api/home',methods = ['GET'])
@@ -97,7 +92,7 @@ def validate():
         query = "SELECT * FROM admins WHERE phone=\"" + str(id) + "\" and pwd=\"" + str(pwd) + "\" LIMIT 1"
         res = db_obj.db_transaction(query,1,False)
         if res == "conn_err":
-            print("DB Error : ",e)
+            print("DB Error : ")
             return render_template('login.html',err = "conn_err")
         if res is not None:   
             session["loggedin"] = True
@@ -168,9 +163,6 @@ def get_devs():
     else:
         return redirect(url_for('login'))
 #-----------Service Requests------------------#
-@app.route('/devsr',methods=['GET']) #Serves form template for passwordd request
-def request_form():
-    return render_template('dev_services.html')
 
 @app.route('/devsr/send',methods=['POST','GET'])  #Handles POST request arrived from dev_services.html
 def sendmail():
@@ -184,20 +176,12 @@ def sendmail():
     if pwd is None:
         return render_template('dev_services.html',err="unregistered")
     pwd = pwd[0]
-    sender_email = config["MAIL_USERNAME"]
     SUBJECT = "Response to your recent service request with flask app!!"
     TEXT = "Your password for the Flask portal is : " + pwd
-    msg = Message(
-                SUBJECT,
-                sender =sender_email,
-                recipients = [email]
-               )
-    msg.body = TEXT
-    try:
-        mail.send(msg)
+    response = mail_obj.send_mail(SUBJECT,TEXT,email)
+    if response == "success":
         return render_template('dev_services.html',err="Successful")
-    except Exception as e:
-        print("Something Wrong with the SMTP Server!!!!!!!!!!!!! :" ,e)
+    else:
         return render_template('dev_services.html',err="db")
 #----------------------------------------#
 @app.route('/api/help', methods = ['GET'])
