@@ -1,4 +1,5 @@
 from flask import Flask,render_template,url_for,redirect,request,session
+from flask_bcrypt import Bcrypt
 import json
 import time
 
@@ -19,6 +20,9 @@ app = Flask(__name__)
 #Register blueprints
 app.register_blueprint(admin)
 app.register_blueprint(view)
+
+#Crypto Ops object 'bcrypt' initialization
+bcrypt = Bcrypt(app)  
 
 #Initiate MySql Connection from flask app
 db_obj = db_conn(app,config)  #Creating Object of class database_conn,
@@ -89,21 +93,22 @@ def validate():
     if request.method == 'POST':
         id = request.form['id']
         pwd = request.form['pwd']
-        query = "SELECT * FROM admins WHERE phone=\"" + str(id) + "\" and pwd=\"" + str(pwd) + "\" LIMIT 1"
+        query = "SELECT * FROM admins WHERE phone=\"" + str(id) + "\" LIMIT 1"
         res = db_obj.db_transaction(query,1,False)
         if res == "conn_err":
             print("DB Error : ")
             return render_template('login.html',err = "conn_err")
-        if res is not None:   
-            session["loggedin"] = True
-            session["userid"] = res[2]
-            session["name"] = res[1]
-            query = "select count(PHONE) from developers"
-            acc = db_obj.db_transaction(query,1,False) ##Give 3rd arg is False for all select queries, True for insert queries.
-            session['pr'] = acc[0]
-            return redirect(url_for('home'))
-        else:
-            return render_template('login.html',err = "True")
+        if res is not None:
+            if bcrypt.check_password_hash(res[3], pwd):   
+                session["loggedin"] = True
+                session["userid"] = res[2]
+                session["name"] = res[1]
+                query = "select count(PHONE) from developers"
+                acc = db_obj.db_transaction(query,1,False) ##Give 3rd arg is False for all select queries, True for insert queries.
+                session['pr'] = acc[0]
+                return redirect(url_for('home'))
+            else:
+                return render_template('login.html',err = "True")
 #------------------------------------------------------------------------------------------------------#
 #----------Approvals page---------------#
 @app.route('/approvals',methods=['GET'])
