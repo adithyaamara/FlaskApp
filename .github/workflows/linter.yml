@@ -1,0 +1,27 @@
+name: Mega-Linter
+
+on:
+  workflow_dispatch:
+  pull_request:
+ 
+
+jobs:
+  build:
+    name: Mega-Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Mega-Linter
+      - name: Mega-Linter-Python
+        # You can override Mega-Linter flavor used to have faster performances
+        uses: nvuillam/mega-linter/flavors/python@v4
+
+      # Mega-Linter
+      - name: Mega-Linter
+        uses: nvuillam/mega-linter/flavors/documentation@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      
