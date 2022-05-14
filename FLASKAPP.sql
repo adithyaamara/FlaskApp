@@ -35,7 +35,6 @@ CREATE TABLE `developers` (
 --
 
 CREATE TABLE `verified_devs` (
-  `ID` int NOT NULL,
   `NAME` varchar(100) NOT NULL,
   `EMAIL` varchar(50) NOT NULL,
   `PHONE` varchar(10) NOT NULL,
@@ -57,18 +56,4 @@ ALTER TABLE `developers`
   ADD UNIQUE KEY `PHONE` (`PHONE`),
   ADD UNIQUE KEY `EMAIL` (`EMAIL`);
 
---
--- Indexes for table `verified_devs`
---
-ALTER TABLE `verified_devs`
-  ADD PRIMARY KEY (`ID`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `verified_devs`
---
-ALTER TABLE `verified_devs`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;COMMIT;
+COMMIT;
