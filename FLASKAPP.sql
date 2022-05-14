@@ -7,11 +7,11 @@ CREATE TABLE `admins` (
 );
 
 --
--- Dumping data for table `admins`
+-- Dumping data for table `admins` --Default User Id is : 1234567890 --Default password is admin (BCrypt Hashed and stored!)
 --
 
 INSERT INTO `admins` (`ID`, `NAME`, `PHONE`, `PWD`) VALUES
-(1, 'your_name', 'your_user_id', 'YourPassword');
+(1, 'ADMINISTRATOR', '1234567890', '$2a$12$D9Edm0zbqczu/ax8FQ6bI.65Hu9R.bjyM0QorhPNKxVTqqAG9.9fa');
 
 -- --------------------------------------------------------
 
