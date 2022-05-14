@@ -44,7 +44,7 @@ def home():
             query = "select count(PHONE) from developers"
             acc = db_obj.db_transaction(query,1,False)
             session['pr'] = acc[0] or '0'
-            query = "select count(ID) from verified_devs"
+            query = "select count(PHONE) from verified_devs"
             acc = db_obj.db_transaction(query,1,False)
             session['rd'] = acc[0] or '0'
             return render_template('home.html')
