@@ -34,6 +34,19 @@ services:
       - PMA_HOST=sqldb
       - PMA_USER=example
       - PMA_PASSWORD=example
+  flaskapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - sqldb
+    restart: always
+    container_name: FlaskApp
+    ports:
+      - 4444:4444
+    networks:
+      example:
+
 networks:
   example:
 volumes:
