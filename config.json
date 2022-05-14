@@ -5,7 +5,7 @@
     "MYSQL_DB" : "example",
     "APP_SECRET" : "XXXXXXXXXXXXXX",
     "RandomPassLength" : 10,
-    "App_Interface" : "127.0.0.1",
+    "App_Interface" : "0.0.0.0",
     "MAIL_PASSWORD" : "xxxxxxx",
     "MAIL_SERVER" : "smtp.gmail.com",
     "MAIL_PORT" : 465,
