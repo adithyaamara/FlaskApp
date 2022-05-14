@@ -1,0 +1,13 @@
+{
+    "MYSQL_HOST" : "http://sqldb:3306",
+    "MYSQL_USER" : "example",
+    "MYSQL_PASSWORD" : "example",
+    "MYSQL_DB" : "example",
+    "APP_SECRET" : "XXXXXXXXXXXXXX",
+    "RandomPassLength" : 10,
+    "App_Interface" : "127.0.0.1",
+    "MAIL_PASSWORD" : "xxxxxxx",
+    "MAIL_SERVER" : "smtp.gmail.com",
+    "MAIL_PORT" : 465,
+    "MAIL_USERNAME" : "xxxxxxxxxx@gmail.com"
+}
