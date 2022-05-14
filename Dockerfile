@@ -10,5 +10,8 @@ COPY main.py /app/main.py
 COPY config.json /app/config.json
 COPY templates/ /app/templates
 COPY /static/ /app/static
+COPY /addons/ /app/addons/
+COPY /admin/ /app/admin/
+COPY /guest/ /app/guest/
 EXPOSE 4444
 CMD [ "python3", "./main.py" ]
