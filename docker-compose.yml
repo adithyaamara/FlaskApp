@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  sqldb:
+    image: mysql
+    restart: always
+    container_name: mysql
+    volumes:
+      - sqlvol:/var/lib/mysql
+    networks:
+      example:
+        aliases:
+          - sqldb
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_DATABASE=example
+      - MYSQL_USER=example
+      - MYSQL_PASSWORD=example
+  pma:
+    image: phpmyadmin
+    restart: always
+    container_name: pma
+    depends_on:
+      - sqldb
+    networks:
+      example:
+        aliases:
+          - pma
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_PORT=3306
+      - PMA_HOST=sqldb
+      - PMA_USER=example
+      - PMA_PASSWORD=example
+  flaskapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - sqldb
+    restart: always
+    container_name: FlaskApp
+    ports:
+      - 4444:4444
+    networks:
+      example:
+
+networks:
+  example:
+volumes:
+  sqlvol:
+    driver: local

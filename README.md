@@ -1,5 +1,5 @@
 # FlaskApp
-A Python - Flask application to demonstrate possible functionalities of Flask Framework 
+A Python - Flask application to demonstrate possible functionalities of Flask Framework
 
 # Configuration:
 ```json
@@ -18,7 +18,7 @@ A Python - Flask application to demonstrate possible functionalities of Flask Fr
 }
 ```
 *MYSQL_XXXXX* : DATABASE related config.
-*APP_SECRET* : Used to hash the browser session cookies to avoid cookie tampering attack.
+*APP_SECRET* : Used to hash the browser session cookies to avoid cookie tampering attack. Also same is used for Bcrypt Hashing the passwords stored in SQL DB.
 *RandomPassLength* : Once a developer is verified, will get a randomly generated password of length specified here 
 *MAIL_XXXX* : Relavant email server config for sending mails to developers using Flask_MySQLdb package. 
 
@@ -26,6 +26,16 @@ A Python - Flask application to demonstrate possible functionalities of Flask Fr
 - If a mysql db  with above configuration is up, Proceed as follows:
 - `FlaskApp.sql` has all the required SQL statements for creating and adding sample data to tables [Edit the data insert statements as needed]. Use any helper like `phpmyadmin.co` to execute all the sql statements and setup the database.
 - Once database is ready with above config, one can proceed to run the application.
+
+# Usage - Docker Compose [Easiest Way]
+ - `git clone https://github.com/adithyaamara/FlaskApp.git`
+ - `cd FlaskApp/`
+ - Edit all configurable parameters of this application in `config.json` (Otherwise defaults are applied). Optionally at `docker-compose.yml` also.
+ - Run whole application using `docker-compose up -d --build`
+ - Visit `http://docker-host-ip:8080` to use PhpMyadmin and import `FlaskApp.sql`. This should setup all required databses and tables at once.
+ - Same can be used for any further Databse related operations like adding / deleting admins etc...
+ > The admin passwords must be hashed and stored in database. [Hash Your password here](https://bcrypt-generator.com/)
+ - Visit the application homepage at `http://docker-host-ip:4444` and login with default userid(1234567890) and password (admin).
 
 # Usage - Docker
  - `git clone https://github.com/adithyaamara/FlaskApp.git`

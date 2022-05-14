@@ -44,7 +44,7 @@ def home():
             query = "select count(PHONE) from developers"
             acc = db_obj.db_transaction(query,1,False)
             session['pr'] = acc[0] or '0'
-            query = "select count(ID) from verified_devs"
+            query = "select count(PHONE) from verified_devs"
             acc = db_obj.db_transaction(query,1,False)
             session['rd'] = acc[0] or '0'
             return render_template('home.html')
@@ -130,7 +130,7 @@ def process(d,id):
                 return "Database Unavailable! Try again sometime later!!"
             randompass = pwd_gen(int(config["RandomPassLength"])).genarate() #Using pwd_gen class' generate method for password generation
             if rec:
-                query = "INSERT INTO verified_devs values(\""+ "\",\"" + str(rec[0]) + "\",\"" + str(rec[1]) + "\",\"" + str(rec[2]) + "\",\"" + str(rec[3]) + "\"," + str(rec[4]) +",\""+randompass+"\")"
+                query = "INSERT INTO verified_devs values(\"" + str(rec[0]) + "\",\"" + str(rec[1]) + "\",\"" + str(rec[2]) + "\",\"" + str(rec[3]) + "\"," + str(rec[4]) +",\""+randompass+"\")"
                 res = db_obj.db_transaction(query,0,True) #For commit true given, 2nd arg "record count to return" is ignored because we don't need return records for commit transactions.
                 if res == "conn_err":
                     print("DB Error. Transaction Failed")

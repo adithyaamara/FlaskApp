@@ -1,3 +1,4 @@
+use example;
 -- Create admins table 
 CREATE TABLE `admins` (
   `ID` int NOT NULL,
@@ -7,11 +8,11 @@ CREATE TABLE `admins` (
 );
 
 --
--- Dumping data for table `admins`
+-- Dumping data for table `admins` --Default User Id is : 1234567890 --Default password is admin (BCrypt Hashed and stored!)
 --
 
 INSERT INTO `admins` (`ID`, `NAME`, `PHONE`, `PWD`) VALUES
-(1, 'your_name', 'your_user_id', 'YourPassword');
+(1, 'ADMINISTRATOR', '1234567890', '$2a$12$D9Edm0zbqczu/ax8FQ6bI.65Hu9R.bjyM0QorhPNKxVTqqAG9.9fa');
 
 -- --------------------------------------------------------
 
@@ -34,7 +35,6 @@ CREATE TABLE `developers` (
 --
 
 CREATE TABLE `verified_devs` (
-  `ID` int NOT NULL,
   `NAME` varchar(100) NOT NULL,
   `EMAIL` varchar(50) NOT NULL,
   `PHONE` varchar(10) NOT NULL,
@@ -56,18 +56,4 @@ ALTER TABLE `developers`
   ADD UNIQUE KEY `PHONE` (`PHONE`),
   ADD UNIQUE KEY `EMAIL` (`EMAIL`);
 
---
--- Indexes for table `verified_devs`
---
-ALTER TABLE `verified_devs`
-  ADD PRIMARY KEY (`ID`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `verified_devs`
---
-ALTER TABLE `verified_devs`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;COMMIT;
+COMMIT;
