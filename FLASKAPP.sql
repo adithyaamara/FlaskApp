@@ -1,3 +1,4 @@
+use example;
 -- Create admins table 
 CREATE TABLE `admins` (
   `ID` int NOT NULL,
