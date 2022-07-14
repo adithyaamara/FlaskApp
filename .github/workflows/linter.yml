@@ -16,11 +16,11 @@ jobs:
       # Mega-Linter
       - name: Mega-Linter-Python
         # You can override Mega-Linter flavor used to have faster performances
-        uses: megalinter/megalinter/flavors/python@v5
+        uses: oxsecurity/megalinter/flavors/python@v5
 
       # Mega-Linter
       - name: Mega-Linter
-        uses: megalinter/megalinter/flavors/documentation@v4
+        uses: oxsecurity/megalinter/flavors/documentation@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
