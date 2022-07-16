@@ -25,16 +25,18 @@
 3. PHP MyAdmin [For easier management of sql database]
 
 # Initial Configuration:
-> **Please edit this properly before deployment, for app to work properly**
+> **Please edit this properly before deployment, for app to work properly.**
+> The default values in `config.json` are set to match with config we have in docker-compose. 
+> Please ensure to do the matching changes in `config.json`, `docker-compose.yml`
 ```json
 {
-    "MYSQL_HOST" : "sql6.freesqldatabase.com",
-    "MYSQL_USER" : "sqlabcd123",
-    "MYSQL_PASSWORD" : "your_password",
-    "MYSQL_DB" : "sqldbname",
+    "MYSQL_HOST" : "host name / ip of sql database",
+    "MYSQL_USER" : "username to login to sql db",
+    "MYSQL_PASSWORD" : "password to login to sql db",
+    "MYSQL_DB" : "Target database name inside sql db",
     "APP_SECRET" : "XXXXXXXXXXXXXX",
     "RandomPassLength" : 10,
-    "App_Interface" : "127.0.0.1",
+    "App_Interface" : "127.0.0.1 | 0.0.0.0",
     "MAIL_PASSWORD" : "xxxxxxx",
     "MAIL_SERVER" : "smtp.gmail.com",
     "MAIL_PORT" : 465,
@@ -45,11 +47,6 @@
 - *APP_SECRET* : Used to hash the browser session cookies to avoid cookie tampering attack. Also same is used for Bcrypt Hashing the passwords stored in SQL DB.
 - *RandomPassLength* : Once a developer is verified, will get a randomly generated password of length specified here 
 - *MAIL_XXXX* : Relavant email server config for sending mails to developers using Flask_MySQLdb package. 
-
-# My SQL DB setup:
-- If a mysql db  with above configuration is up, Proceed as follows:
-- `FlaskApp.sql` has all the required SQL statements for creating and adding sample data to tables [Edit the data insert statements as needed]. Use any helper like `phpmyadmin.co` to execute all the sql statements and setup the database.
-- Once database is ready with above config, one can proceed to run the application.
 
 # Deploy_With_Docker_Compose : 👉 [Easiest Way]
  - Clone the repo using command --> `git clone https://github.com/adithyaamara/FlaskApp.git`
@@ -65,6 +62,11 @@
    > It is Recommended to delete the default admin user, add your own admin user by inserting a record to `admins` table using `PHPMyAdmin`. 
    > While adding the admins manually, passwords must be hashed and stored in database. [Hash Your password here](https://bcrypt-generator.com/)
  - Visit the Flask application homepage at `http://docker-host-ip:[4444 | PORT YOU exposed IN docker-compose.yml]` and login with default userid(`1234567890`) and password (`admin`) OR using your own admin credentials if you have added any in previosu step.
+
+# My SQL DB setup:
+- If a mysql db  with above configuration specified in `config.json` is up and ready, Proceed as follows:
+- `FlaskApp.sql` has all the required SQL statements for creating and adding sample data to tables [Edit the data insert statements if needed]. Use any helper like `phpmyadmin.co` to execute all the sql statements and setup the database.
+- Once database is ready with above config, one can proceed to run the application.
 
 # Usage - Docker
  - `git clone https://github.com/adithyaamara/FlaskApp.git`
