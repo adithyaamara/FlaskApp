@@ -1,7 +1,7 @@
 # FlaskApp
 **A Python - Flask based web application with following features:**
 
-Contents : 
+# Contents : 
 1. [Features](#features)
 2. [Software Stack Used](#software-stack)
 3. [Initial Configuration of APP](#initial-configuration)
@@ -54,12 +54,17 @@ Contents :
 # Deploy_With_Docker_Compose : 👉 [Easiest Way]
  - Clone the repo using command --> `git clone https://github.com/adithyaamara/FlaskApp.git`
  - Change Current Working Directory to app using cmd --> `cd FlaskApp/`
- - Edit all configurable parameters of this application in `config.json` (Otherwise defaults are applied). Optionally at `docker-compose.yml` also.
+ - Edit all configurable parameters of this application in `config.json` (Otherwise defaults are applied).
+ - Also accordingly edit environment variables of services in `docker-compose.yml` for proper wire up,
+    integration between 3 services(php my admin, mysql, python-flask app).
  - Run whole application using `docker-compose up -d --build`
- - Visit `http://docker-host-ip:8080` to use PhpMyadmin and import `FlaskApp.sql`. This should setup all required databses and tables at once.
- - Same can be used for any further Databse related operations like adding / deleting admins etc...
- > The admin passwords must be hashed and stored in database. [Hash Your password here](https://bcrypt-generator.com/)
- - Visit the application homepage at `http://docker-host-ip:4444` and login with default userid(1234567890) and password (admin).
+ - First Visit the url --> `http://docker-host-ip:8080` to use PhpMyAdmin and import `FlaskApp.sql` using the UI.
+   This should setup all the required back-end databases and tables at once.
+   > Doing the above step will by default add a single default admin user to admin database to enable first time login. 
+ - Same can be used for any further Databse related operations like adding / deleting admins etc... 
+   > It is Recommended to delete the default admin user, add your own admin user by inserting a record to `admins` table using `PHPMyAdmin`. 
+   > While adding the admins manually, passwords must be hashed and stored in database. [Hash Your password here](https://bcrypt-generator.com/)
+ - Visit the Flask application homepage at `http://docker-host-ip:[4444 | PORT YOU exposed IN docker-compose.yml]` and login with default userid(`1234567890`) and password (`admin`) OR using your own admin credentials if you have added any in previosu step.
 
 # Usage - Docker
  - `git clone https://github.com/adithyaamara/FlaskApp.git`
