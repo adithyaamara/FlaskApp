@@ -1,5 +1,10 @@
 version: '3'
-
+# All 3 serrvices are on same network named 'example', enabling container communication.
+# MY SQL Database is set to have host name as `sqldb`, with no ports exposed to host.
+# PHPMyAdmin communicates with `sqldb` over default port `3306` using the same user name, password declared in environemnt section of sqldb.
+# PHPMyAdmin exposes UI over 8080 port on host for our use.
+# Flaskapp which is built from docker file in run time, exposes port 4444 of container to 4444 of host by default unless changed. 
+# Any change to Flask app service must be followed by respective change in config.json which app reads and depends on for configuration.   
 services:
   sqldb:
     image: mysql
@@ -9,7 +14,7 @@ services:
       - sqlvol:/var/lib/mysql
     networks:
       example:
-        aliases:
+        aliases: 
           - sqldb
     environment:
       - MYSQL_ROOT_PASSWORD=example
