@@ -12,6 +12,7 @@ services:
     container_name: mysql
     volumes:
       - sqlvol:/var/lib/mysql
+      - ./FLASKAPP.sql:/docker-entrypoint-initdb.d/dump.sql
     networks:
       app:
         aliases: 
