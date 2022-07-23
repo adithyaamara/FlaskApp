@@ -51,14 +51,12 @@
 # Deploy_With_Docker_Compose : 👉 [Easiest Way]
  - Clone the repo using command --> `git clone https://github.com/adithyaamara/FlaskApp.git`
  - Change Current Working Directory to app using cmd --> `cd FlaskApp/`
- - Edit all configurable parameters of this application in `config.json` (Otherwise defaults are applied).
- - Also accordingly edit environment variables of services in `docker-compose.yml` for proper wire up,
-    integration between 3 services(php my admin, mysql, python-flask app).
+ - Edit all configurable parameters of this application in `.env` (Otherwise defaults are applied, Some Features will not work).
+   > Due to a known issue, Please avoid editing `MYSQL_DB` variable in .env for the sql auto import to work. 
  - Run whole application using `docker-compose up -d --build`
- - First Visit the url --> `http://docker-host-ip:8080` to use PhpMyAdmin and import `FlaskApp.sql` using the UI.
-   This should setup all the required back-end databases and tables at once.
-   > Doing the above step will by default add a single default admin user to admin database to enable first time login. 
- - Same can be used for any further Databse related operations like adding / deleting admins etc... 
+ - First Visit the url --> `http://docker-host-ip:8080` to use PhpMyAdmin and manage SQL Database.
+   > You should see that all the required databases and tables are auto imported to  SQL DB from `FlaskAPP.sql`
+ - PhpMyAdmin can also be used for any further Database related operations like adding / deleting admins etc... 
    > It is Recommended to delete the default admin user, add your own admin user by inserting a record to `admins` table using `PHPMyAdmin`. 
    > While adding the admins manually, passwords must be hashed and stored in database. [Hash Your password here](https://bcrypt-generator.com/)
  - Visit the Flask application homepage at `http://docker-host-ip:[4444 | PORT YOU exposed IN docker-compose.yml]` and login with default userid(`1234567890`) and password (`admin`) OR using your own admin credentials if you have added any in previosu step.
