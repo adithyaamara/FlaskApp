@@ -13,14 +13,14 @@ services:
     volumes:
       - sqlvol:/var/lib/mysql
     networks:
-      example:
+      app:
         aliases: 
-          - sqldb
+          - ${MYSQL_HOST}
     environment:
-      - MYSQL_ROOT_PASSWORD=example
-      - MYSQL_DATABASE=example
-      - MYSQL_USER=example
-      - MYSQL_PASSWORD=example
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
   pma:
     image: phpmyadmin
     restart: always
@@ -28,7 +28,7 @@ services:
     depends_on:
       - sqldb
     networks:
-      example:
+      app:
         aliases:
           - pma
     ports:
@@ -36,9 +36,9 @@ services:
     environment:
       - PMA_ARBITRARY=1
       - PMA_PORT=3306
-      - PMA_HOST=sqldb
-      - PMA_USER=example
-      - PMA_PASSWORD=example
+      - PMA_HOST=${MYSQL_HOST}
+      - PMA_USER=${MYSQL_USER}
+      - PMA_PASSWORD=${MYSQL_PASSWORD}
   flaskapp:
     build:
       context: .
@@ -50,10 +50,10 @@ services:
     ports:
       - 4444:4444
     networks:
-      example:
+      app:
 
 networks:
-  example:
+  app:
 volumes:
   sqlvol:
     driver: local
