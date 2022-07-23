@@ -1,4 +1,4 @@
-use example;
+use FlaskAppDB;
 -- Create admins table 
 CREATE TABLE `admins` (
   `ID` int NOT NULL,

@@ -1,10 +1,10 @@
 version: '3'
-# All 3 serrvices are on same network named 'example', enabling container communication.
-# MY SQL Database is set to have host name as `sqldb`, with no ports exposed to host.
+# All 3 serrvices are on same network named 'app', enabling container communication.
+# MY SQL Database is set to have host name as read from .env, with no ports exposed to host. It also auto imports sql from FlaskApp.sql
 # PHPMyAdmin communicates with `sqldb` over default port `3306` using the same user name, password declared in environemnt section of sqldb.
 # PHPMyAdmin exposes UI over 8080 port on host for our use.
 # Flaskapp which is built from docker file in run time, exposes port 4444 of container to 4444 of host by default unless changed. 
-# Any change to Flask app service must be followed by respective change in config.json which app reads and depends on for configuration.   
+# Any change to Flask app service must be followed by respective change in .env file which app reads and depends on for configuration.
 services:
   sqldb:
     image: mysql
@@ -12,15 +12,16 @@ services:
     container_name: mysql
     volumes:
       - sqlvol:/var/lib/mysql
+      - ./FLASKAPP.sql:/docker-entrypoint-initdb.d/dump.sql
     networks:
-      example:
+      app:
         aliases: 
-          - sqldb
+          - ${MYSQL_HOST}
     environment:
-      - MYSQL_ROOT_PASSWORD=example
-      - MYSQL_DATABASE=example
-      - MYSQL_USER=example
-      - MYSQL_PASSWORD=example
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DB}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
   pma:
     image: phpmyadmin
     restart: always
@@ -28,7 +29,7 @@ services:
     depends_on:
       - sqldb
     networks:
-      example:
+      app:
         aliases:
           - pma
     ports:
@@ -36,9 +37,9 @@ services:
     environment:
       - PMA_ARBITRARY=1
       - PMA_PORT=3306
-      - PMA_HOST=sqldb
-      - PMA_USER=example
-      - PMA_PASSWORD=example
+      - PMA_HOST=${MYSQL_HOST}
+      - PMA_USER=${MYSQL_USER}
+      - PMA_PASSWORD=${MYSQL_PASSWORD}
   flaskapp:
     build:
       context: .
@@ -50,10 +51,10 @@ services:
     ports:
       - 4444:4444
     networks:
-      example:
+      app:
 
 networks:
-  example:
+  app:
 volumes:
   sqlvol:
     driver: local
