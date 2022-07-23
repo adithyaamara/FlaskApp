@@ -7,7 +7,7 @@ RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 COPY main.py /app/main.py
-COPY config.json /app/config.json
+COPY .env /app/.env
 COPY templates/ /app/templates
 COPY /static/ /app/static
 COPY /addons/ /app/addons/
