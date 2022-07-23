@@ -6,15 +6,18 @@ import time
 from addons.db_connector import db_conn
 from addons.email_connector import email_conn
 from addons.password_gen import pwd_gen
-
+from addons.env2json import convert_env_to_json
 #Import blueprints for guest and amin routes
 from guest.views import view
 from admin.views import admin
 
-#Read MySql Config from json
+# Convert env config to json config
+convert_env_to_json()
+
+#Read App Config from json
 config = json.load(open("config.json",'r'))
 
-#Craete an object of Flak class
+#Create an object of Flak class
 app = Flask(__name__)
 
 #Register blueprints
