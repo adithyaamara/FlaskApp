@@ -11,11 +11,8 @@ from addons.env2json import convert_env_to_json
 from guest.views import view
 from admin.views import admin
 
-# Convert env config to json config
-convert_env_to_json()
-
-#Read App Config from json
-config = json.load(open("config.json",'r'))
+# Convert env config to json config, load it
+config = convert_env_to_json()
 
 #Create an object of Flak class
 app = Flask(__name__)
@@ -202,6 +199,6 @@ def help():
     return render_template('site-map.html', result = func_list)
 
 if __name__ == '__main__':
-    config = json.load(open("config.json",'r'))
+    config = convert_env_to_json()
     Interface = config["App_Interface"]
     app.run(Interface,4444,True)
