@@ -21,6 +21,9 @@ def convert_env_to_json(env_file_path=None, json_file_path=None):
     
     # convert each line in env to dictionary item
     for line in fp_env.readlines():
+        if line[0] == '#':
+            print("Skipping the line because it is a comment!!")
+            continue
         config_item = line.split('\n')[0].split('=')  # REMOVE TRAILING NEW LINE CHARACTER, SEPARATE LEFT AND RIGHT STRINGS.
         config_dict[config_item[0]] = config_item[1]  # Add each item taken from env as a dictionary item.
 
